@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react"
 import { Link, NavLink, useNavigate } from "react-router-dom"
-import { Gamepad2, Library, Search } from "lucide-react"
+import { Gamepad2, Library, Moon, Search, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useLibrary } from "@/context/library-context"
@@ -14,6 +15,28 @@ const NAV_ITEMS = [
 export function Navbar() {
   const navigate = useNavigate()
   const { entries } = useLibrary()
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    if (typeof window === "undefined") return "dark"
+
+    const savedTheme = window.localStorage.getItem("theme")
+    if (savedTheme === "dark" || savedTheme === "light") {
+      return savedTheme
+    }
+
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light"
+  })
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark")
+    document.documentElement.style.colorScheme = theme
+    window.localStorage.setItem("theme", theme)
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme((current) => (current === "dark" ? "light" : "dark"))
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
@@ -50,15 +73,34 @@ export function Navbar() {
           ))}
         </nav>
 
-        <Button
-          variant="outline"
-          size="sm"
-          className="ml-auto gap-2"
-          onClick={() => navigate("/search")}
-        >
-          <Search className="size-4" />
-          <span className="hidden sm:inline">Buscar juegos</span>
-        </Button>
+        <div className="ml-auto flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={toggleTheme}
+            aria-label="Cambiar tema"
+          >
+            {theme === "dark" ? (
+              <Sun className="size-4" />
+            ) : (
+              <Moon className="size-4" />
+            )}
+            <span className="hidden sm:inline">
+              {theme === "dark" ? "Claro" : "Oscuro"}
+            </span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => navigate("/search")}
+          >
+            <Search className="size-4" />
+            <span className="hidden sm:inline">Buscar juegos</span>
+          </Button>
+        </div>
       </div>
     </header>
   )
