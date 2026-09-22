@@ -15,10 +15,10 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/rawg": {
-        target: "https://api.rawg.io/api",
+      "/api/rawg": {
+        target: "http://localhost:3001",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/rawg/, ""),
+        rewrite: (path) => path.replace(/^\/api\/rawg/, "/rawg"),
       },
     },
   },
