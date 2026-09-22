@@ -1,0 +1,19 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[dev]
+  framework = "vite"
+  command = "vite --host 127.0.0.1 --port 4173"
+  targetPort = 4173
+  port = 8888
+
+[[redirects]]
+  from = "/api/rawg"
+  to = "/.netlify/functions/rawg"
+  status = 200
+
+[[redirects]]
+  from = "/api/rawg/*"
+  to = "/.netlify/functions/rawg/:splat"
+  status = 200
